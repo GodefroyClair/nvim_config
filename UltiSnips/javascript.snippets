@@ -1,0 +1,10 @@
+snippet creq "assign a CommonJS-style module to a const"
+const ${0:${1/(.+\/)*(\w+)(-|\b|$)(\..+$)?/$2/g}} = require('$1');
+endsnippet
+
+
+snippet exp "module.exports objs"
+module.exports = {
+  $1;
+}
+endsnippet
