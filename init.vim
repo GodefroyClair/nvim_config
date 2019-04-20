@@ -1,7 +1,9 @@
+language en_US
 scriptencoding utf-8
 call plug#begin('~/.local/share/nvim/plugged')
 
 " set fileencoding=utf-8
+" let NERDTreeMenuUp='t'
 
 " DEBUG
 " let g:LanguageClient_loggingLevel = 'DEBUG'
@@ -19,11 +21,11 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 " Complementary pairs of mappings. Mostly fall into four categories.
 Plug 'tpope/vim-unimpaired'
-" add info to character revealing with ga 
+" add info to character revealing with ga
 Plug 'tpope/vim-characterize'
 " sugar for the UNIX shell commands
 Plug 'tpope/vim-eunuch'
-" A set of mappings for HTML, XML, PHP, ASP, eRuby, JSP, etc. 
+" A set of mappings for HTML, XML, PHP, ASP, eRuby, JSP, etc.
 " base : <ctrl-X> <ctrl-V>
 Plug 'tpope/vim-ragtag'
 " Repeat.vim remaps . in a way that plugins can tap into it.
@@ -78,7 +80,7 @@ Plug 'wokalski/autocomplete-flow'
 
 " ternjs
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'], 'do': 'npm install', } 
+Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'], 'do': 'npm install', }
 " Plug 'mhartington/nvim-typescript'
 
 " wasm
@@ -88,6 +90,7 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
+set runtimepath+=~/.local/share/nvim/plugged/LanguageClient-neovim
 
 Plug 'ervandew/supertab' " Perform all your vim insert mode completions with Tab
 
@@ -132,7 +135,7 @@ set mouse=a " enable the use of the mouse ('a'=all)
 " autocomplete files relative path relative to current file (not terminal path)
 set autochdir
 
-" Set information display 
+" Set information display
 set laststatus=2 " always have a status line
 set list " show invisibles
 set listchars=tab:▸\ ,eol:¬ " show invisibles options
@@ -152,7 +155,7 @@ set wildmenu
 set wildmode=full
 
 " IDE
-" NERDTREETABS 
+" NERDTREETABS
 " run on console at startup
 let g:nerdtree_tabs_open_on_console_startup=1
 "open nerdtree & put cursor into file to edit
@@ -167,18 +170,18 @@ colorscheme solarized8_light
 " colorscheme nova
 highlight Normal ctermfg=lightgrey ctermbg=darkblue
 " color of matching pairs
-highlight MatchParen ctermbg=yellow 
+highlight MatchParen ctermbg=yellow
 " color of comments
 highlight Comment ctermfg=lightblue
 nnoremap <CR> :nohlsearch<CR><CR> " rm search highlight
 
 " Split, window...
 " create special terminal window
-command! Termb botright 5split | terminal 
+command! Termb botright 5split | terminal
 " To map <Esc> to exit terminal-mode:
 tnoremap <Esc> <C-\><C-n>
 
-" Shortcuts 
+" Shortcuts
 " get to the file under cursor
 nmap ;e :execute 'next ' . expand('<cfile>')<CR>
 nmap ;o :echo expand('<cfile>')
@@ -203,6 +206,12 @@ autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 let g:deoplete#omni#functions = {}
 let g:deoplete#omni#functions.javascript = ['LanguageClient#Complete','ternjs']
 
+" Haskell
+Plug 'neovimhaskell/haskell-vim', { 'for': 'haskell' }
+Plug 'Twinside/vim-hoogle', { 'for': 'haskell' }
+Plug 'pbrisbin/vim-syntax-shakespeare'
+Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
+
 " deoplete ternjs
 let g:deoplete#sources#ternjs#types = 1 " include the type of the var or data
 let g:deoplete#sources#ternjs#docs = 1 " include a window with documentation
@@ -221,14 +230,17 @@ let g:deoplete#sources['javascript.jsx'] = ['file', 'ultisnips', 'ternjs'] ", 'L
 let g:deoplete#sources['javascript'] = ['file', 'ultisnips', 'LanguageClient']
 
 " Language client (LSP)
+set hidden
+"     \ 'javascript': ['javascript-typescript-stdio'],
 let g:LanguageClient_serverCommands = {
-      \ 'javascript': ['javascript-typescript-stdio'],
+      \ 'javascript': ['flow-language-server', '--stdio'],
       \ 'javascript.jsx': ['language-server-stdio'],
       \ 'typescript': ['language-server-stdio'],
       \ 'html': ['html-languageserver', '--stdio'],
       \ 'css': ['css-languageserver', '--stdio'],
       \ 'sass': ['css-languageserver', '--stdio'],
       \ 'scss': ['css-languageserver', '--stdio'],
+      \ 'python': ['pyls'],
       \ }
 
 " call deoplete#enable_logging('DEBUG', '/Users/godot/.config/nvim/log/deoplete.log')
@@ -237,8 +249,9 @@ let g:LanguageClient_serverCommands = {
 let g:ale_completion_enabled = 1
 " prettier in included in the eslint config!!
 " Flake8 is a wrapper around PyFlakes, pycodestyle, Ned Batchelder’s McCabe script
-let g:ale_linters = {'javascript': ['eslint'], 'javascript.jsx': ['eslint'], 'python': ['flake8', 'vulture'], 'vim': ['vint'], 'r': ['lintr'], 'reason': ['merlin'], 'docker': ['hadolint'], 'cpp': ['clang', 'clang-format', 'cppcheck', 'cpplint']}
-let g:ale_fixers = {'javascript': ['eslint'], 'javascript.jsx': ['eslint'], 'python': ['autopep8'],'cpp': ['clang-format']}
+let g:ale_linters = {'javascript': ['eslint'], 'javascript.jsx': ['eslint'], 'python': ['flake8', 'vulture'], 'vim': ['vint'], 'r': ['lintr'], 'reason': ['merlin'], 'docker': ['hadolint'], 'cpp': ['clang', 'clang-format', 'cppcheck', 'cpplint'], 'haskell': ['hlint', 'hdevtools', 'hfmt']}
+
+let g:ale_fixers = {'javascript': ['eslint'], 'javascript.jsx': ['eslint'], 'python': ['autopep8', 'isort'],'cpp': ['clang-format'], 'haskell': ['hfmt']}
 let g:ale_python_autopep8_options = '--aggressive'
 let g:ale_fix_on_save = 1
 let g:ale_emit_conflict_warnings = 1
@@ -295,7 +308,7 @@ function! QuoteDelim(char)
     "Starting a string
     return a:char.a:char."\<Left>"
   endif
-endf 
+endf
 
 function! InAnEmptyPair()
   let l:cur = strpart(getline('.'),getpos('.')[2]-2,2)
